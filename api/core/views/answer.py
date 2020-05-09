@@ -1,16 +1,11 @@
-from django.db import transaction
-from django.utils.translation import ugettext_lazy as _
-from rest_framework import generics, serializers, status
+from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from core.models.post import Answer
 from core.serializers.answer import AnswerSerializer
 
 
 class AnswerCreate(generics.CreateAPIView):
 
     description = 'This route is used to create a new answer.'
-
     serializer_class = AnswerSerializer
 
     def post(self, request, post_id=None, format=None):

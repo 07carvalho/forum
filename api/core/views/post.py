@@ -1,4 +1,3 @@
-from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import generics, serializers, status
 from rest_framework.response import Response
@@ -38,7 +37,6 @@ class PostDetail(APIView):
             return Post.objects.get(pk=post_id)
         except Post.DoesNotExist:
             raise serializers.ValidationError({'not_found': _('This post does not exist.')})
-
 
     def get(self, request, post_id, format=None):
         post = self.get_object(post_id)
