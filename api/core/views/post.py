@@ -28,11 +28,9 @@ class PostList(generics.ListCreateAPIView):
 
 
 class PostDetail(APIView):
-    '''
-    Get a post. Update and delete methods have not been implemented
-    because there is no authentication and permission policy
-    '''
-
+    """Get a post. Update and delete methods have not been implemented
+    because there is no authentication and permission policy.
+    """
     description = 'This route is used to get a single post.'
 
     def get_object(self, post_id):

@@ -21,18 +21,14 @@ class PostListAPIViewTestCase(APITestCase):
 
 
     def test_list_posts(self):
-        '''
-        List the posts
-        '''
+        """List the posts"""
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
         self.assertEqual(3, len(response.data))
 
 
     def test_post_creation(self):
-        '''
-        Create a new post with 0 likes and 0 answers
-        '''
+        """Create a new post with 0 likes and 0 answers"""
         data = {
             'title': 'What is the meaning of life?',
             'text': 'Happiness is the meaning and the purpose of life, the whole aim and end of human existence. Am I right, guys?',
@@ -42,3 +38,54 @@ class PostListAPIViewTestCase(APITestCase):
         self.assertEqual(201, response.status_code)
         self.assertEqual(0, response.data.get('like'))
         self.assertEqual(0, len(response.data.get('answers')))
+
+
+class PostDetailAPIViewTestCase(APITestCase):
+
+    url = reverse('post_detail', kwargs={'post_id': 1})
+
+    def setUp(self):
+        data = {'title': 'Title 1', 'text': 'Text 1', 'user': 'user1'}
+        Post.objects.create(**data)
+
+    def test_get_post(self):
+        """Make a request to get a post instance"""
+        respose = self.client.get(self.url)
+        self.assertEqual(200, respose.status_code)
+
+
+class AnswerCreateAPIViewTestCase(APITestCase):
+
+    answer_url = reverse('answer_create', kwargs={'post_id': 1})
+    post_url = reverse('post_detail', kwargs={'post_id': 1})
+
+    def setUp(self):
+        data = {'title': 'Title 1', 'text': 'Text 1', 'user': 'user1'}
+        Post.objects.create(**data)
+
+    def test_one_answer_creation(self):
+        """Create a new answer to a post"""
+        data = {
+            'text': 'The answer to the Ultimate Question of Life, the Universe, and Everything is 42',
+            'user': 'douglas_adams',
+        }
+        response = self.client.post(self.answer_url, data)
+        self.assertEqual(201, response.status_code)
+        self.assertEqual(0, response.data.get('like'))
+
+    def test_answer_creation_and_post_request(self):
+        """Create 5 answers to a post and check post"""
+        data = [
+            {'text': 'Answer 1', 'user': 'user1'},
+            {'text': 'Answer 2', 'user': 'user2'},
+            {'text': 'Answer 3', 'user': 'user3'},
+            {'text': 'Answer 4', 'user': 'user4'},
+            {'text': 'Answer 5', 'user': 'user5'},
+        ]
+
+        for answer in data:
+            response = self.client.post(self.answer_url, answer)
+            self.assertEqual(201, response.status_code)
+
+        post_respose = self.client.get(self.post_url)
+        self.assertEqual(5, len(post_respose.data.get('answers')))
