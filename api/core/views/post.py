@@ -9,13 +9,16 @@ from core.serializers.post import PostSerializer
 class PostList(generics.ListCreateAPIView):
 
     description = 'This route is used to list or create a new post.'
-
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
     def list(self, request):
         queryset = self.get_queryset()
-        serializer = PostSerializer(queryset, many=True)
+
+        order = request.query_params.get('order', None)
+        ordered_queryset = Post().order_queryset(queryset, order)
+
+        serializer = PostSerializer(ordered_queryset, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):

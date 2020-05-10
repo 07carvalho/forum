@@ -1,5 +1,6 @@
 import random
 from django.db import models
+from django.db.models import Count
 from django.utils.text import slugify
 
 
@@ -34,6 +35,16 @@ class Post(models.Model):
             return slug_generator(title)
         return slug
 
+    def order_queryset(self, queryset, order):
+        """Order the posts list queryset"""
+        if order is not None:
+            if order == 'created_at' or order == '-created_at':
+                return queryset.order_by(order)
+            elif order == 'likes' or order == '-likes':
+                return Post.objects.annotate(likes_count=Count('likes')).order_by(order + '_count', '-created_at')
+
+        # default is order by most recents
+        return queryset.order_by('-created_at')
 
 class Answer(models.Model):
     """This model represents an answer of a post."""
