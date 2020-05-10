@@ -15,8 +15,11 @@ class PostList(generics.ListCreateAPIView):
     def list(self, request):
         queryset = self.get_queryset()
 
-        order = request.query_params.get('order', None)
-        ordered_queryset = Post().order_queryset(queryset, order)
+        filter_by = request.query_params.get('filter', None)
+        filtered_queryset = Post().filter_queryset(queryset, filter_by)
+
+        order_by = request.query_params.get('order', None)
+        ordered_queryset = Post().order_queryset(filtered_queryset, order_by)
 
         serializer = PostSerializer(ordered_queryset, many=True)
         return Response(serializer.data)

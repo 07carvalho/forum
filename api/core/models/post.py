@@ -35,16 +35,24 @@ class Post(models.Model):
             return slug_generator(title)
         return slug
 
-    def order_queryset(self, queryset, order):
+    def filter_queryset(self, queryset, filter_by):
+        """Filter a post list queryset if param is no-answers"""
+        if filter_by is not None and filter_by == 'no-answers':
+            return queryset.annotate(answers_count=Count('answers')).filter(answers_count=0)
+        return queryset
+
+
+    def order_queryset(self, queryset, order_by):
         """Order the posts list queryset"""
-        if order is not None:
-            if order == 'created_at' or order == '-created_at':
-                return queryset.order_by(order)
-            elif order == 'likes' or order == '-likes':
-                return Post.objects.annotate(likes_count=Count('likes')).order_by(order + '_count', '-created_at')
+        if order_by is not None:
+            if order_by == 'created_at' or order_by == '-created_at':
+                return queryset.order_by(order_by)
+            elif order_by == 'likes' or order_by == '-likes':
+                return Post.objects.annotate(likes_count=Count('likes')).order_by(order_by + '_count', '-created_at')
 
         # default is order by most recents
         return queryset.order_by('-created_at')
+
 
 class Answer(models.Model):
     """This model represents an answer of a post."""
