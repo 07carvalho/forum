@@ -2,10 +2,10 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import ForumNavbar from './components/Navbars/Navbar';
-// import { Router } from 'react-router';
-import Home from "./views/Home.js";
-// import Index from "./views/Index.js";
-import Landing from "./views/examples/Landing.js";
+import ForumFooter from "./components/Footers/ForumFooter";
+import Home from "./pages/Home/Home";
+import Post from "./pages/Post/Post";
+
 
 class App extends React.Component {
   constructor(props) {
@@ -20,14 +20,17 @@ class App extends React.Component {
       <Router>
         <ForumNavbar />
         <Switch>
-          <Route path="/" exact render={props => <Home {...props} />} />
           <Route
-            path="/landing-page"
+            path="/"
             exact
-            render={props => <Landing {...props} />}
+            render={props => <Home {...props} />} />
+          <Route
+            path="/posts/:id/:slug"
+            render={props => <Post {...props} />}
           />
           <Redirect to="/" />
         </Switch>
+        <ForumFooter />
       </Router>
     );
   }
