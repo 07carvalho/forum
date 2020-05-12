@@ -8,9 +8,7 @@ import {
 } from "reactstrap";
 
 class ForumNavbar extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+
   render() {
     return (
       <div>

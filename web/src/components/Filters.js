@@ -2,9 +2,6 @@ import React from 'react';
 import FilterButton from './FilterButton';
 
 class Filters extends React.Component {
-  constructor(props) {
-      super(props);
-  }
 
   render() {
     return (

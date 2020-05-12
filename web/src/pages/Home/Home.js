@@ -232,7 +232,7 @@ class Home extends React.Component {
     return (
       <main className="mt-7" ref="main">
         <HomeBanner />
-        <section className="section section-lg pt-lg-0 mt--200">
+        <section className="section section-lg pt-lg-0" style={{'marginTop': '-165px'}}>
           <Container>
             <Row className="justify-content-center">
               <Col sm lg="8">
