@@ -11,14 +11,18 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      posts: []
+      user: {
+        name: 'Ada Lovelace',
+        user: 'ada',
+        photo: require("./assets/img/profile/ada-lovelace.jpg")
+      }
     }
   }
 
   render() {
     return (
       <Router>
-        <ForumNavbar />
+        <ForumNavbar user={this.state.user} />
         <Switch>
           <Route
             path="/"

@@ -1,9 +1,11 @@
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import generics, serializers, status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from core.models.post import Post
 from core.serializers.post import PostSerializer
+from core.auth import CsrfExemptSessionAuthentication
 
 
 class PostList(generics.ListCreateAPIView):
@@ -11,6 +13,8 @@ class PostList(generics.ListCreateAPIView):
     description = 'This route is used to list or create a new post.'
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = [CsrfExemptSessionAuthentication,]
 
     def list(self, request):
         queryset = self.get_queryset()

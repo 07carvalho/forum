@@ -7,9 +7,10 @@ import {
   CardBody,
   Container,
   Row,
-  Col
+  Col,
 } from 'reactstrap';
 import Filters from '../../components/Filters';
+import CustomModal from "../../components/CustomModal";
 import HomeBanner from "./HomeBanner";
 
 
@@ -20,9 +21,36 @@ class Home extends React.Component {
       order: 'created_at',
       ascSort: false,
       filter: false,
-      posts: []
+      posts: [],
+      postModal: {
+        id: 'postModal',
+        open: false,
+        title: "Nova Questão",
+        inputs: {
+          title: {
+            label: 'Título',
+            placeholder: 'Dê um título para sua questão',
+            value: '',
+            type: 'text',
+            required: true,
+            minLength: 5,
+            maxLength: 60,
+          },
+          text: {
+            label: 'Descrição',
+            placeholder: 'Descreva melhor sua dúvida',
+            value: '',
+            type: 'textarea',
+            required: true,
+            minLength: 5,
+            maxLength: 600,
+          }
+        },
+        onChange: this.onChange,
+        toggleMethod: this.toggleModal,
+        submitMethod: this.submitPostModal
+      }
     }
-
   }
 
   componentDidMount() {
@@ -40,6 +68,29 @@ class Home extends React.Component {
     axios.get('/api/v1/posts/', {params: params})
     .then(res => {
       this.setState({ posts: res.data });
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  }
+
+  /**
+   * Create a new post and insert in the top of list.
+   *
+   * @param {function} callBack
+   * @public
+   */
+  createPost = (callBack) => {
+    const data = {
+      title: this.state.postModal.inputs.title.value,
+      text: this.state.postModal.inputs.text.value,
+      user: 'ada'
+    }
+    axios.post('/api/v1/posts/', data)
+    .then(res => {
+      this.setState({
+        posts: [res.data].concat(this.state.posts)
+      }, () => callBack);
     })
     .catch(function (error) {
       console.log(error);
@@ -109,6 +160,74 @@ class Home extends React.Component {
     })
   }
 
+  /**
+   * Open and close the modal according to the name
+   *
+   * @param {string} state
+   * @public
+   */
+  toggleModal = state => {
+    this.setState({
+      [state]: {...this.state[state], open: !this.state[state].open}
+    }, () => this.clearModal(state));
+  }
+
+  /**
+   * Change the icon according the sorting direction (down or up).
+   *
+   * @param {object} e
+   * @param {string} state
+   * @param {string} key
+   * @public
+   */
+  onChange = (e, state, key) => {
+    this.setState(prevState => ({
+      [state]: {
+        ...prevState[state],
+        inputs: {
+          ...prevState[state].inputs,
+          [key]: {
+            ...prevState[state].inputs[key],
+            value: e
+          }
+        }
+      }
+    }))
+  }
+
+  /**
+   * Clear modal inputs
+   *
+   * @param {string} state
+   * @public
+   */
+  clearModal = (state) => {
+    const keys = Object.keys(this.state[state].inputs);
+    keys.map(key => {
+      this.setState(prevState => ({
+        [state]: {
+          ...prevState[state],
+          inputs: {
+            ...prevState[state].inputs,
+            [key]: {
+              ...prevState[state].inputs[key],
+              value: ''
+            }
+          }
+        }
+      }))
+    })
+  }
+
+  /**
+   * Call function that create a new post.
+   *
+   * @public
+   */
+  submitPostModal = () => {
+    this.createPost(this.toggleModal('postModal'));
+  }
+
   render() {
     return (
       <main className="mt-7" ref="main">
@@ -117,6 +236,21 @@ class Home extends React.Component {
           <Container>
             <Row className="justify-content-center">
               <Col sm lg="8">
+                <Card
+                  onClick={() => this.toggleModal('postModal')}>
+                  <CardBody>
+                    <div className="mb-3" style={{'display': 'flex'}}>
+                      <span className="avatar avatar-sm rounded-circle"
+                        style={{'width': '24px', 'height': '24px'}}>
+                        <img alt="..."
+                          src="/static/media/ada-lovelace.7c26ffbb.jpg" />
+                      </span>
+                      <div className="m-0 ml-3">Ada Lovelace</div>
+                    </div>
+                    <h3 className="m-0 text-muted">Faça uma pergunta nova</h3>
+                  </CardBody>
+                </Card>
+                <hr />
                 <Filters
                   handleOrder={this.handleOrder}
                   activeOrderButton={this.activeOrderButton}
@@ -153,7 +287,6 @@ class Home extends React.Component {
                       className="mt-4"
                       color="warning"
                       href="#pablo"
-                      onClick={e => e.preventDefault()}
                     >
                       Learn more
                     </Button>
@@ -163,6 +296,9 @@ class Home extends React.Component {
             </Row>
           </Container>
         </section>
+        <CustomModal
+          modal={this.state.postModal}
+        />
       </main>
     );
   }
