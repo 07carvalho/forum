@@ -1,5 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from core.auth import CsrfExemptSessionAuthentication
 from core.models.post import Answer, AnswerLike
 from core.serializers.answer_like import AnswerLikeSerializer
 
@@ -8,6 +10,8 @@ class AnswerLikeCreate(generics.CreateAPIView, generics.DestroyAPIView):
 
     description = 'This route is used to post and delete a like instance.'
     serializer_class = AnswerLikeSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = [CsrfExemptSessionAuthentication,]
 
     def post(self, request, post_id=None, answer_id=None, format=None):
         if Answer().is_answer_post(answer_id, post_id):

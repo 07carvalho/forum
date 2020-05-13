@@ -14,16 +14,24 @@ services:
       - "8000:8000"
   #    depends_on:
   #      - db
-  #  web:
-  #    build: ./web
-  #    command: ["npm", "start"]
-  #    volumes:
-  #      - ./web:/app/web
-  #      - node-modules:/app/web/node_modules
-  #    ports:
-  #      - "3000:3000"
-  #    environment:
-  #      - NODE_ENV=development
+  web:
+    # container_name: front
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./web:/app
+#      build: ./web
+#      command: ["npm", "start"]
+#      volumes:
+#        - ./web:/app/web
+#        - node-modules:/app/web/node_modules
+#      ports:
+#        - "3000:3000"
+#      environment:
+#        - NODE_ENV=development
 
 #volumes:
 #  node-modules:

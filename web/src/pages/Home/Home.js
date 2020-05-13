@@ -9,6 +9,7 @@ import {
   Row,
   Col,
 } from 'reactstrap';
+import API from '../../api/API';
 import Filters from '../../components/Filters';
 import CustomModal from "../../components/CustomModal";
 import HomeBanner from "./HomeBanner";
@@ -24,7 +25,7 @@ class Home extends React.Component {
       postModal: {
         id: 'postModal',
         open: false,
-        title: "Nova Questão",
+        title: 'Nova Questão',
         inputs: {
           title: {
             label: 'Título',
@@ -64,7 +65,7 @@ class Home extends React.Component {
   getPosts = () => {
     let order = `${this.state.ascSort ? '' : '-'}${this.state.order}`;
     let params = {order};
-    axios.get('/api/v1/posts/', {params: params})
+    API.get('/api/v1/posts/', {params: params})
     .then(res => {
       this.setState({ posts: res.data });
     })
@@ -131,32 +132,52 @@ class Home extends React.Component {
   }
 
   /**
+   * Handle color button
+   *
+   * @param {object} post
+   * @public
+   */
+  verifyUserLiked(post) {
+    return post.user_liked ? 'primary' : 'secondary';
+  }
+
+  /**
    * Create the post cards after the request.
    *
    * @public
    */
   composePosts() {
-    return this.state.posts.map((post, i) => {
+    if (this.state.posts.length > 0) {
+      return this.state.posts.map((post, i) => {
+        return (
+          <Card className="mb-4" key={i}>
+            <CardBody>
+              <p className="description text-muted mt-0">Postado por @{post.user}, em {post.created_at}</p>
+              <a href={`/posts/${post.id}/${post.slug}`}>
+                <h6 className="text-primary text-uppercase font-weight-600">{post.title}</h6>
+              </a>
+              <p className="mt-3" style={{'color': '#525f7f'}}>{post.text}</p>
+              <div className="data-container">
+                <Badge color={this.verifyUserLiked(post)} pill className="mr-1" style={{'cursor': 'pointer'}}
+                  onClick={() => this.handleLikeButton(post)}>
+                  {post.likes} likes
+                </Badge>
+                <Badge color="secondary" pill className="mr-1">
+                  {post.answers.length} respostas
+                </Badge>
+              </div>
+            </CardBody>
+          </Card>
+        )
+      })
+    } else {
       return (
-        <Card className="mb-4" key={i}>
-          <CardBody>
-            <p className="description text-muted mt-0">Postado por @{post.user}, em {post.created_at}</p>
-            <a href={`/posts/${post.id}/${post.slug}`}>
-              <h6 className="text-primary text-uppercase font-weight-600">{post.title}</h6>
-            </a>
-            <p className="mt-3" style={{'color': '#525f7f'}}>{post.text}</p>
-            <div className="data-container">
-              <Badge color="secondary" pill className="mr-1">
-                {post.answers.length} respostas
-              </Badge>
-              <Badge color="secondary" pill className="mr-1">
-                {post.likes} likes
-              </Badge>
-            </div>
-          </CardBody>
-        </Card>
+        <div className="align-content-center" style={{'width': '40%', 'margin': '172px auto'}}>
+          <h5>Sem Perguntas por enquanto</h5>
+          <img alt="Sem Perguntas" className="img-fluid" src={require('../../assets/img/theme/icon-no-post.jpeg')} />
+        </div>
       )
-    })
+    }
   }
 
   /**
@@ -225,6 +246,69 @@ class Home extends React.Component {
    */
   submitPostModal = () => {
     this.createPost(this.toggleModal('postModal'));
+  }
+
+  /**
+   * Handle color button
+   *
+   * @param {object} post
+   * @public
+   */
+  updateLikeButton = (post) => {
+    post.user_liked = !post.user_liked;
+    post.likes += 1;
+
+    this.setState(prevState => ({
+      posts: prevState.posts.map(
+        obj => (obj.id === post.id ? post : obj)
+      )
+    }));
+  }
+
+  /**
+   * Handle color button
+   *
+   * @param {object} post
+   * @public
+   */
+  handleLikeButton = (post) => {
+    if (post.user_liked) {
+      this.dislikePost(post);
+    } else {
+      this.likePost(post);
+    }
+  }
+
+  /**
+   * Make request to like
+   *
+   * @param {object} post
+   * @public
+   */
+  likePost = (post) => {
+    axios.post(`/api/v1/posts/${post.id}/likes/`, {user: 'localhost'})
+    .then(res => {
+      this.updateLikeButton(post);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  }
+
+  /**
+   * Make request to delete like
+   *
+   * @param {object} post
+   * @public
+   */
+  dislikePost = (post) => {
+    axios.delete(`/api/v1/posts/${post.id}/likes/`, {user: 'localhost'})
+    .then(res => {
+      this.updateLikeButton(post);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   }
 
   render() {

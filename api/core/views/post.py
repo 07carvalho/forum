@@ -1,11 +1,11 @@
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import generics, serializers, status
 from rest_framework.permissions import AllowAny
+from core.auth import CsrfExemptSessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from core.models.post import Post
 from core.serializers.post import PostSerializer
-from core.auth import CsrfExemptSessionAuthentication
 
 
 class PostList(generics.ListCreateAPIView):
@@ -26,7 +26,7 @@ class PostList(generics.ListCreateAPIView):
         ordered_queryset = Post().order_queryset(filtered_queryset, order_by)
 
         # user is passed in header to simulate a authenticated user
-        user = request.META['HTTP_USER']
+        user = request.META.get('HTTP_USER', None)
         serializer = PostSerializer(ordered_queryset, many=True, context={'user': user})
         return Response(serializer.data)
 
@@ -54,7 +54,7 @@ class PostDetail(APIView):
         post = self.get_object(post_id)
 
         # user is passed in header to simulate a authenticated user
-        user = request.META['HTTP_USER']
+        user = request.META.get('HTTP_USER', None)
 
         serializer = PostSerializer(post, context={'user': user})
         return Response(serializer.data, status=status.HTTP_200_OK)

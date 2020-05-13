@@ -1,5 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from core.auth import CsrfExemptSessionAuthentication
 from core.serializers.answer import AnswerSerializer
 
 
@@ -7,6 +9,8 @@ class AnswerCreate(generics.CreateAPIView):
 
     description = 'This route is used to create a new answer.'
     serializer_class = AnswerSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = [CsrfExemptSessionAuthentication,]
 
     def post(self, request, post_id=None, format=None):
         serializer = AnswerSerializer(data=request.data)
