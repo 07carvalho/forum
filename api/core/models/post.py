@@ -36,9 +36,15 @@ class Post(models.Model):
         return slug
 
     def filter_queryset(self, queryset, filter_by):
-        """Filter a post list queryset if param is no-answers"""
-        if filter_by is not None and filter_by == 'no-answers':
-            return queryset.annotate(answers_count=Count('answers')).filter(answers_count=0)
+        """Filter a post list queryset according to filter_by"""
+        if filter_by is not None:
+            if filter_by == 'no-answers':
+                return queryset.annotate(answers_count=Count('answers')).filter(answers_count=0)
+            elif filter_by == 'top-answered':
+                return queryset.annotate(answers_count=Count('answers')).order_by('-answers_count')[:5]
+            elif filter_by == 'related':
+                # for didactic purposes only. it is not related at all.
+                return queryset.order_by('?')[:5]
         return queryset
 
 
@@ -48,10 +54,8 @@ class Post(models.Model):
             if order_by == 'created_at' or order_by == '-created_at':
                 return queryset.order_by(order_by)
             elif order_by == 'likes' or order_by == '-likes':
-                return Post.objects.annotate(likes_count=Count('likes')).order_by(order_by + '_count', '-created_at')
-
-        # default is order by most recents
-        return queryset.order_by('-created_at')
+                return queryset.annotate(likes_count=Count('likes')).order_by(order_by + '_count', '-created_at')
+        return queryset
 
 
 class Answer(models.Model):

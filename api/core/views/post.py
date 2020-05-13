@@ -11,7 +11,7 @@ from core.auth import CsrfExemptSessionAuthentication
 class PostList(generics.ListCreateAPIView):
 
     description = 'This route is used to list or create a new post.'
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().order_by('-created_at')
     serializer_class = PostSerializer
     permission_classes = [AllowAny]
     authentication_classes = [CsrfExemptSessionAuthentication,]
@@ -25,7 +25,9 @@ class PostList(generics.ListCreateAPIView):
         order_by = request.query_params.get('order', None)
         ordered_queryset = Post().order_queryset(filtered_queryset, order_by)
 
-        serializer = PostSerializer(ordered_queryset, many=True)
+        # user is passed in header to simulate a authenticated user
+        user = request.META['HTTP_USER']
+        serializer = PostSerializer(ordered_queryset, many=True, context={'user': user})
         return Response(serializer.data)
 
     def post(self, request, format=None):
@@ -50,6 +52,10 @@ class PostDetail(APIView):
 
     def get(self, request, post_id, format=None):
         post = self.get_object(post_id)
-        serializer = PostSerializer(post)
+
+        # user is passed in header to simulate a authenticated user
+        user = request.META['HTTP_USER']
+
+        serializer = PostSerializer(post, context={'user': user})
         return Response(serializer.data, status=status.HTTP_200_OK)
 

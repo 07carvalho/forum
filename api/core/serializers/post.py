@@ -9,6 +9,7 @@ class PostSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True) # serializers.SerializerMethodField()
     likes = serializers.SerializerMethodField()
     slug = serializers.SlugField(read_only=True)
+    user_liked = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -16,3 +17,8 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_likes(self, obj):
         return PostLike.objects.filter(post=obj).count()
+
+    def get_user_liked(self, obj):
+        # user is passed in header to simulate a authenticated user
+        user = self.context.get('user', None)
+        return False if user is None else PostLike.objects.filter(post=obj, user=user).exists()
