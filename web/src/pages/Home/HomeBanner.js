@@ -4,7 +4,8 @@ import {Col, Container, Row} from "reactstrap";
 class HomeBanner extends React.Component {
   render() {
     return (
-      <div className="position-relative" style={{'background': `url(${require('../../assets/img/theme/forum.jpeg')}) bottom center no-repeat`, 'backgroundPosition': 'top'}}>
+      <div className="position-relative"
+           style={{'background': `url(${require('../../assets/img/theme/forum.jpeg')}) top center no-repeat`, 'backgroundPosition': 'top'}}>
         <section className="section section-lg" style={{'paddingBottom': '230px'}}>
           <Container className="py-lg-md d-flex">
             <div className="col px-0">

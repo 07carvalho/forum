@@ -1,5 +1,7 @@
 import React from 'react';
 import {Button} from "reactstrap";
+import PropTypes from "prop-types";
+
 
 class FilterButton extends React.Component {
   render() {
@@ -18,5 +20,13 @@ class FilterButton extends React.Component {
     );
   }
 }
+
+FilterButton.propTypes = {
+  text: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  handleOrder: PropTypes.func.isRequired,
+  activeOrderButton: PropTypes.func.isRequired,
+  handleSortIcon: PropTypes.func.isRequired,
+};
 
 export default FilterButton;

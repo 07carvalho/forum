@@ -1,5 +1,7 @@
 import React from "react";
 import {Modal, Button, Form, FormGroup, Label, Input} from "reactstrap";
+import PropTypes from "prop-types";
+import FilterButton from "./FilterButton";
 
 
 class CustomModal extends React.Component {
@@ -96,5 +98,27 @@ class CustomModal extends React.Component {
     )
   }
 }
+
+CustomModal.propTypes = {
+  modal: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    open: PropTypes.bool.isRequired,
+    title: PropTypes.string.isRequired,
+    inputs: PropTypes.arrayOf(
+      PropTypes.shape({
+        label: PropTypes.string.isRequired,
+        placeholder: PropTypes.string.isRequired,
+        value: PropTypes.string.isRequired,
+        type: PropTypes.string.isRequired,
+        required: PropTypes.bool.isRequired,
+        minLength: PropTypes.number.isRequired,
+        maxLength: PropTypes.number.isRequired,
+      }),
+    ),
+    onChange: PropTypes.func.isRequired,
+    toggleMethod: PropTypes.func.isRequired,
+    submitMethod: PropTypes.func.isRequired
+  })
+};
 
 export default CustomModal;

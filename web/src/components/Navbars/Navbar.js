@@ -17,7 +17,7 @@ class ForumNavbar extends React.Component {
             <NavbarBrand className="mr-lg-5" to="/" tag={Link}>
               <img
                 alt="..."
-                src={require('../../assets/img/brand/argon-react-white.png')}
+                src={require('../../assets/img/brand/logo.png')}
               />
             </NavbarBrand>
             <Nav className="align-items-lg-center ml-lg-auto" navbar>

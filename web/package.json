@@ -20,7 +20,8 @@
     "react-router": "5.1.2",
     "react-router-dom": "5.1.2",
     "react-scripts": "3.4.1",
-    "reactstrap": "^8.4.1"
+    "reactstrap": "^8.4.1",
+    "prop-types": "latest"
   },
   "devDependencies": {
     "@types/googlemaps": "3.39.2",

@@ -13,7 +13,6 @@ import Filters from '../../components/Filters';
 import CustomModal from "../../components/CustomModal";
 import HomeBanner from "./HomeBanner";
 
-
 class Home extends React.Component {
   constructor(props) {
     super(props)
@@ -139,11 +138,11 @@ class Home extends React.Component {
   composePosts() {
     return this.state.posts.map((post, i) => {
       return (
-        <Card className="shadow border-0 mb-4" key={i}>
+        <Card className="mb-4" key={i}>
           <CardBody>
             <p className="description text-muted mt-0">Postado por @{post.user}, em {post.created_at}</p>
             <a href={`/posts/${post.id}/${post.slug}`}>
-              <h6 className="text-primary text-uppercase">{post.title}</h6>
+              <h6 className="text-primary text-uppercase font-weight-600">{post.title}</h6>
             </a>
             <p className="mt-3" style={{'color': '#525f7f'}}>{post.text}</p>
             <div className="data-container">
@@ -259,7 +258,7 @@ class Home extends React.Component {
                 { this.composePosts() }
               </Col>
               <Col lg="4">
-                <Card className="shadow border-0">
+                <Card>
                   <CardBody className="py-5">
                     <div className="icon icon-shape icon-shape-warning rounded-circle mb-4">
                       <i className="ni ni-planet" />

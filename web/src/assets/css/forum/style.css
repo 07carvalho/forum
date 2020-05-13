@@ -1,0 +1,10 @@
+.textarea-input {
+    border: transparent;
+    padding: 0;
+    /*resize: none;*/
+}
+
+.textarea-input::placeholder {
+    font-size: 1.75rem;
+    color: #8898aa !important;
+}

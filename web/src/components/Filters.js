@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import FilterButton from './FilterButton';
 
 class Filters extends React.Component {
@@ -24,5 +25,11 @@ class Filters extends React.Component {
     );
   }
 }
+
+Filters.propTypes = {
+  handleOrder: PropTypes.func.isRequired,
+  activeOrderButton: PropTypes.func.isRequired,
+  handleSortIcon: PropTypes.func.isRequired,
+};
 
 export default Filters;
