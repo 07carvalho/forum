@@ -22,6 +22,7 @@ class Home extends React.Component {
       ascSort: false,
       filter: false,
       posts: [],
+      topAnswered: [],
       postModal: {
         id: 'postModal',
         open: false,
@@ -55,6 +56,7 @@ class Home extends React.Component {
 
   componentDidMount() {
     this.getPosts();
+    this.getTopAnswered();
   }
 
   /**
@@ -67,6 +69,14 @@ class Home extends React.Component {
       this.state.ascSort, this.state.order
     ).then((response) => {
       this.setState({ posts: response.data });
+    })
+  }
+
+  getTopAnswered = () => {
+    API.getTopAnswered(
+      this.state.ascSort, this.state.order
+    ).then((response) => {
+      this.setState({ topAnswered: response.data });
     })
   }
 
@@ -263,34 +273,16 @@ class Home extends React.Component {
                 <Card>
                   <CardBody className="py-5">
                     <div className="icon icon-shape icon-shape-warning rounded-circle mb-4">
-                      <i className="ni ni-planet" />
+                      <i className="ni ni-favourite-28" />
                     </div>
                     <h6 className="text-warning text-uppercase">
-                      Prepare Launch
+                      Mais Respondidas
                     </h6>
-                    <p className="description mt-3">
-                      Argon is a great free UI package based on Bootstrap
-                      4 that includes the most important components and
-                      features.
-                    </p>
-                    <div>
-                      <Badge color="warning" pill className="mr-1">
-                        marketing
-                      </Badge>
-                      <Badge color="warning" pill className="mr-1">
-                        product
-                      </Badge>
-                      <Badge color="warning" pill className="mr-1">
-                        launch
-                      </Badge>
+                    <div className="description mt-3">
+                      {this.state.topAnswered && this.state.topAnswered.map((item) => {
+                        return <p><a href={`/posts/${item.id}/${item.slug}/`}>{item.title}</a></p>
+                      })}
                     </div>
-                    <Button
-                      className="mt-4"
-                      color="warning"
-                      href="#pablo"
-                    >
-                      Learn more
-                    </Button>
                   </CardBody>
                 </Card>
               </Col>

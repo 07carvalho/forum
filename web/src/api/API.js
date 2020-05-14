@@ -14,7 +14,29 @@ export default {
       })
     })
   },
-  getDetail: (postId) => {
+  getTopAnswered: () => {
+    return new Promise((resolve, reject) => {
+      index.get('/api/v1/posts/?filter=top-answered')
+      .then(response => {
+        resolve(response)
+      })
+      .catch(error => {
+        reject(Error(error))
+      })
+    })
+  },
+  getRelated: () => {
+    return new Promise((resolve, reject) => {
+      index.get('/api/v1/posts/?filter=related')
+      .then(response => {
+        resolve(response)
+      })
+      .catch(error => {
+        reject(Error(error))
+      })
+    })
+  },
+  getPost: (postId) => {
     console.log(postId);
     return new Promise((resolve, reject) => {
       index.get(`/api/v1/posts/${postId}/`)

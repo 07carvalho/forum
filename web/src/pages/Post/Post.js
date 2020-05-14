@@ -19,7 +19,8 @@ class Post extends React.Component {
     this.state = {
       post: null,
       text: '',
-      disableButton: false
+      disableButton: false,
+      related: []
     }
   }
 
@@ -28,6 +29,7 @@ class Post extends React.Component {
 
   componentDidMount() {
     this.getPost();
+    this.getRelated();
   }
 
   /**
@@ -37,9 +39,16 @@ class Post extends React.Component {
    */
   getPost = () => {
     const { match: { params } } = this.props;
-    API.getDetail(params.id
+    API.getPost(params.id
     ).then((response) => {
       this.setState({ post: response.data });
+    })
+
+  }
+
+  getRelated = () => {
+    API.getRelated().then((response) => {
+      this.setState({ related: response.data });
     })
 
   }
@@ -308,7 +317,19 @@ class Post extends React.Component {
               </Col>
               <Col sm md="4">
                 <Card>
-                  <CardBody>A</CardBody>
+                  <CardBody className="py-5">
+                    <div className="icon icon-shape icon-shape-warning rounded-circle mb-4">
+                      <i className="ni ni-ungroup" />
+                    </div>
+                    <h6 className="text-warning text-uppercase">
+                      Relacionadas
+                    </h6>
+                    <div className="description mt-3">
+                      {this.state.related && this.state.related.map((item) => {
+                        return <p><a href={`/posts/${item.id}/${item.slug}/`}>{item.title}</a></p>
+                      })}
+                    </div>
+                  </CardBody>
                 </Card>
               </Col>
             </Row>
