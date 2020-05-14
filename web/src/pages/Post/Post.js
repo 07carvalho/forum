@@ -1,4 +1,4 @@
-import React, {Fragment} from "react";
+import React from "react";
 import {
   Badge,
   Card,
@@ -17,7 +17,9 @@ class Post extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      post: null
+      post: null,
+      text: '',
+      disableButton: false
     }
   }
 
@@ -114,7 +116,7 @@ class Post extends React.Component {
             <CardBody>
             {this.state.post.answers.map(item => {
             return (
-              <div className="answer-item">
+            <div className="answer-item">
               <div className="d-flex">
                 <div className="avatar-container">
                   <div className="icon icon-shape icon-shape-warning rounded-circle">
@@ -147,6 +149,34 @@ class Post extends React.Component {
     }
   }
 
+  onChange = (e) => {
+    this.setState({
+      text: e.target.value
+    })
+  }
+
+  disableButton = () => {
+    return (this.state.text.length < 5 || this.state.text.length > 600) || this.state.disableButton;
+  }
+
+  submitAnswer = () => {
+    this.setState({
+      disableButton: true
+    });
+
+    const data = {
+      text: this.state.text
+    };
+
+    API.postAnswer(this.state.post.id, data)
+    .then((response) => {
+      this.setState({
+        text: '',
+        post: {...this.state.post, answers: [response.data].concat(this.state.post.answers)},
+        disableButton: false
+      });
+    });
+  }
 
   render() {
     return (
@@ -196,13 +226,15 @@ class Post extends React.Component {
                         placeholder="Escreva uma resposta"
                         rows="3"
                         type="textarea"
+                        value={this.state.text}
+                        onChange={(event) => this.onChange(event)}
                       />
                       <div className="mt-3 d-flex align-items-center justify-content-end">
                         <Button
                           color="primary"
                           type="button"
-                          // disabled={this.disableButton(this.props.modal.inputs)}
-                          // onClick={() => this.props.modal.submitMethod()}
+                          disabled={this.disableButton()}
+                          onClick={() => this.submitAnswer()}
                         >
                           Postar
                         </Button>
