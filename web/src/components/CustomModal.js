@@ -1,7 +1,6 @@
 import React from "react";
 import {Modal, Button, Form, FormGroup, Label, Input} from "reactstrap";
 import PropTypes from "prop-types";
-import FilterButton from "./FilterButton";
 
 
 class CustomModal extends React.Component {

@@ -14,7 +14,10 @@ class PostLikeCreate(generics.CreateAPIView, generics.DestroyAPIView):
     authentication_classes = [CsrfExemptSessionAuthentication,]
 
     def post(self, request, post_id=None, format=None):
-        if not PostLike().user_liked_post(request.data.get('user'), post_id):
+        # user is passed in header to simulate a authenticated user
+        user = request.META.get('HTTP_USER', None)
+        if not PostLike().user_liked_post(user, post_id):
+            request.data['user'] = user
             serializer = PostLikeSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(post_id=post_id)
@@ -24,7 +27,8 @@ class PostLikeCreate(generics.CreateAPIView, generics.DestroyAPIView):
         return Response(error, status=status.HTTP_403_FORBIDDEN)
 
     def delete(self, request, post_id=None, format=None):
-        user = request.data.get('user')
+        # user is passed in header to simulate a authenticated user
+        user = request.META.get('HTTP_USER', None)
         if PostLike().user_liked_post(user, post_id):
             PostLike.objects.get(user=user, post_id=post_id).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)

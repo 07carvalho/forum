@@ -4,7 +4,7 @@ from core.models.post import PostLike
 
 class PostLikeSerializer(serializers.ModelSerializer):
 
-    created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+    created_at = serializers.DateTimeField(format="%d/%m/%Y %H:%M:%S", read_only=True)
     likes = serializers.SerializerMethodField()
 
     class Meta:

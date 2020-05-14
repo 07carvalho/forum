@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 import {
   Badge,
   Button,
@@ -63,15 +62,11 @@ class Home extends React.Component {
    * @public
    */
   getPosts = () => {
-    let order = `${this.state.ascSort ? '' : '-'}${this.state.order}`;
-    let params = {order};
-    API.get('/api/v1/posts/', {params: params})
-    .then(res => {
-      this.setState({ posts: res.data });
+    API.getPosts(
+      this.state.ascSort, this.state.order
+    ).then((response) => {
+      this.setState({ posts: response.data });
     })
-    .catch(function (error) {
-      console.log(error);
-    });
   }
 
   /**
@@ -83,17 +78,13 @@ class Home extends React.Component {
   createPost = (callBack) => {
     const data = {
       title: this.state.postModal.inputs.title.value,
-      text: this.state.postModal.inputs.text.value,
-      user: 'ada'
-    }
-    axios.post('/api/v1/posts/', data)
-    .then(res => {
+      text: this.state.postModal.inputs.text.value
+    };
+    API.createPost(data)
+    .then((response) => {
       this.setState({
-        posts: [res.data].concat(this.state.posts)
+        posts: [response.data].concat(this.state.posts)
       }, () => callBack);
-    })
-    .catch(function (error) {
-      console.log(error);
     });
   }
 
@@ -223,7 +214,7 @@ class Home extends React.Component {
    */
   clearModal = (state) => {
     const keys = Object.keys(this.state[state].inputs);
-    keys.map(key => {
+    keys.forEach(key => {
       this.setState(prevState => ({
         [state]: {
           ...prevState[state],
@@ -286,13 +277,10 @@ class Home extends React.Component {
    * @public
    */
   likePost = (post) => {
-    axios.post(`/api/v1/posts/${post.id}/likes/`, {user: 'localhost'})
-    .then(res => {
+    API.likePost(post.id)
+    .then(() => {
       this.updateLikeButton(post);
     })
-    .catch(function (error) {
-      console.log(error);
-    });
   }
 
   /**
@@ -302,13 +290,10 @@ class Home extends React.Component {
    * @public
    */
   dislikePost = (post) => {
-    axios.delete(`/api/v1/posts/${post.id}/likes/`, {user: 'localhost'})
-    .then(res => {
+    API.dislikePost(post.id)
+    .then(() => {
       this.updateLikeButton(post);
     })
-    .catch(function (error) {
-      console.log(error);
-    });
   }
 
   render() {

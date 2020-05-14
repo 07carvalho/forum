@@ -6,7 +6,7 @@ from core.serializers.answer import AnswerSerializer
 class PostSerializer(serializers.ModelSerializer):
 
     answers = AnswerSerializer(many=True, read_only=True)
-    created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True) # serializers.SerializerMethodField()
+    created_at = serializers.DateTimeField(format="%d/%m/%Y %H:%M:%S", read_only=True)
     likes = serializers.SerializerMethodField()
     slug = serializers.SlugField(read_only=True)
     user_liked = serializers.SerializerMethodField()
