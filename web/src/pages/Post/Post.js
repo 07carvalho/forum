@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {
   Badge,
   Card,
@@ -8,8 +8,10 @@ import {
   Col,
   Input, Button
 } from "reactstrap";
-import axios from "axios";
 import Form from "reactstrap/lib/Form";
+import API from "../../api/API";
+import utils from '../../utils';
+
 
 class Post extends React.Component {
   constructor(props) {
@@ -30,14 +32,69 @@ class Post extends React.Component {
    */
   getPost = () => {
     const { match: { params } } = this.props;
-    console.log(params);
-    axios.get(`/api/v1/posts/${params.id}`)
-    .then(res => {
-      this.setState({ post: res.data });
+    API.getDetail(params.id
+    ).then((response) => {
+      this.setState({ post: response.data });
     })
-    .catch(function (error) {
-      console.log(error);
+
+  }
+
+  /**
+   * Handle color button
+   *
+   * @param {object} post
+   * @param {boolean} liked
+   * @public
+   */
+  updateLikeButton = (post, liked) => {
+    post.user_liked = !post.user_liked;
+    post.likes = liked ? ++post.likes : --post.likes;
+
+    this.setState({
+      post: post
     });
+  }
+
+  /**
+   * Handle color button
+   *
+   * @param {object} post
+   * @public
+   */
+  handleLikeButton = (post) => {
+    if (post.user_liked) {
+      this.dislikePost(post);
+    } else {
+      this.likePost(post);
+    }
+  }
+
+  /**
+   * Make request to like
+   *
+   * @param {object} post
+   * @public
+   */
+  likePost = (post) => {
+    API.likePost(post.id)
+    .then(() => {
+      const liked = true;
+      this.updateLikeButton(post, liked);
+    })
+  }
+
+  /**
+   * Make request to delete like
+   *
+   * @param {object} post
+   * @public
+   */
+  dislikePost = (post) => {
+    API.dislikePost(post.id)
+    .then(() => {
+      let liked = false;
+      this.updateLikeButton(post, liked);
+    })
   }
 
   getAnswersLabel = () => {
@@ -48,15 +105,55 @@ class Post extends React.Component {
     return <h4>{len} Respostas</h4>
   }
 
+  composeAnswers = () => {
+    if (this.state.post.answers.length > 0) {
+      return (
+        <div>
+          {this.getAnswersLabel()}
+          <Card>
+            <CardBody>
+            {this.state.post.answers.map(item => {
+            return (
+              <div className="answer-item">
+              <div className="d-flex">
+                <div className="avatar-container">
+                  <div className="icon icon-shape icon-shape-warning rounded-circle">
+                    <i className="ni ni-satisfied" />
+                  </div>
+                </div>
+                <div className="answer-container pl-3">
+                  <p className="description m-0">
+                    <span className="font-weight-600">@{item.user}</span>
+                    <span className="text-muted ml-1">{item.created_at}</span></p>
+                  <p className="m-0" style={{'color': '#525f7f'}}>{item.text}</p>
+                  <div className="data-container mt-3">
+                    <Badge color="secondary" pill className="ml--1">
+                      {item.likes} likes
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </div>)
+            })}</CardBody>
+          </Card>
+        </div>
+      )
+    } else {
+      return (
+        <div className="align-content-center" style={{'width': '60%', 'margin': '72px auto'}}>
+          <h5 className="text-center">Sem Respostas por enquanto :(</h5>
+        </div>
+      )
+    }
+  }
+
+
   render() {
     return (
       <main className="mt-7" ref="main">
         <section className="section">
           <Container>
             <Row className="row-grid">
-              {/*{this.state.post && <div>*/}
-
-              {/*</div>*/}
               <Col sm lg="8">
                 {this.state.post &&
                 <Card className="mb-4">
@@ -75,7 +172,8 @@ class Post extends React.Component {
                     </div>
                     <p className="mt-3" style={{'color': '#525f7f'}}>{this.state.post.text}</p>
                     <div className="data-container ml--1">
-                      <Badge color="secondary" pill>
+                      <Badge color={utils.verifyUserLiked(this.state.post)} pill className="mr-1" style={{'cursor': 'pointer'}}
+                        onClick={() => this.handleLikeButton(this.state.post)}>
                         {this.state.post.likes} likes
                       </Badge>
                     </div>
@@ -114,36 +212,7 @@ class Post extends React.Component {
                   </CardBody>
                 </Card>
                 <hr />
-                {this.state.post && this.getAnswersLabel()}
-                {this.state.post &&
-                <Card>
-                  <CardBody>
-                    {this.state.post.answers.map(item => {
-                      return (
-                        <div>
-                          <div className="d-flex">
-                            <div className="avatar-container">
-                              <div className="icon icon-shape icon-shape-warning rounded-circle">
-                                <i className="ni ni-satisfied" />
-                              </div>
-                            </div>
-                            <div className="answer-container pl-3">
-                              <p className="description m-0">
-                                <span className="font-weight-600">@{item.user}</span>
-                                <span className="text-muted ml-1">{item.created_at}</span></p>
-                              <p className="m-0" style={{'color': '#525f7f'}}>{item.text}</p>
-                              <div className="data-container mt-3">
-                                <Badge color="secondary" pill className="ml--1">
-                                  {item.likes} likes
-                                </Badge>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </CardBody>
-                </Card>}
+                {this.state.post && this.composeAnswers()}
               </Col>
               <Col sm lg="4">
                 <Card>

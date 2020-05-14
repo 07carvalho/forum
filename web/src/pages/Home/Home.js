@@ -9,6 +9,7 @@ import {
   Col,
 } from 'reactstrap';
 import API from '../../api/API';
+import utils from '../../utils';
 import Filters from '../../components/Filters';
 import CustomModal from "../../components/CustomModal";
 import HomeBanner from "./HomeBanner";
@@ -123,16 +124,6 @@ class Home extends React.Component {
   }
 
   /**
-   * Handle color button
-   *
-   * @param {object} post
-   * @public
-   */
-  verifyUserLiked(post) {
-    return post.user_liked ? 'primary' : 'secondary';
-  }
-
-  /**
    * Create the post cards after the request.
    *
    * @public
@@ -149,8 +140,7 @@ class Home extends React.Component {
               </a>
               <p className="mt-3" style={{'color': '#525f7f'}}>{post.text}</p>
               <div className="data-container">
-                <Badge color={this.verifyUserLiked(post)} pill className="mr-1" style={{'cursor': 'pointer'}}
-                  onClick={() => this.handleLikeButton(post)}>
+                <Badge color={utils.verifyUserLiked(post)} pill className="mr-1">
                   {post.likes} likes
                 </Badge>
                 <Badge color="secondary" pill className="mr-1">
@@ -237,63 +227,6 @@ class Home extends React.Component {
    */
   submitPostModal = () => {
     this.createPost(this.toggleModal('postModal'));
-  }
-
-  /**
-   * Handle color button
-   *
-   * @param {object} post
-   * @public
-   */
-  updateLikeButton = (post) => {
-    post.user_liked = !post.user_liked;
-    post.likes += 1;
-
-    this.setState(prevState => ({
-      posts: prevState.posts.map(
-        obj => (obj.id === post.id ? post : obj)
-      )
-    }));
-  }
-
-  /**
-   * Handle color button
-   *
-   * @param {object} post
-   * @public
-   */
-  handleLikeButton = (post) => {
-    if (post.user_liked) {
-      this.dislikePost(post);
-    } else {
-      this.likePost(post);
-    }
-  }
-
-  /**
-   * Make request to like
-   *
-   * @param {object} post
-   * @public
-   */
-  likePost = (post) => {
-    API.likePost(post.id)
-    .then(() => {
-      this.updateLikeButton(post);
-    })
-  }
-
-  /**
-   * Make request to delete like
-   *
-   * @param {object} post
-   * @public
-   */
-  dislikePost = (post) => {
-    API.dislikePost(post.id)
-    .then(() => {
-      this.updateLikeButton(post);
-    })
   }
 
   render() {
