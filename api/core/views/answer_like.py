@@ -14,8 +14,11 @@ class AnswerLikeCreate(generics.CreateAPIView, generics.DestroyAPIView):
     authentication_classes = [CsrfExemptSessionAuthentication,]
 
     def post(self, request, post_id=None, answer_id=None, format=None):
+        # user is passed in header to simulate a authenticated user
+        user = request.META.get('HTTP_USER', None)
         if Answer().is_answer_post(answer_id, post_id):
-            if not AnswerLike().user_liked_answer(request.data.get('user'), answer_id):
+            if not AnswerLike().user_liked_answer(user, answer_id):
+                request.data['user'] = user
                 serializer = AnswerLikeSerializer(data=request.data)
                 if serializer.is_valid():
                     serializer.save(answer_id=answer_id)
@@ -27,7 +30,8 @@ class AnswerLikeCreate(generics.CreateAPIView, generics.DestroyAPIView):
 
     def delete(self, request, post_id=None, answer_id=None, format=None):
         if Answer().is_answer_post(answer_id, post_id):
-            user = request.data.get('user')
+            # user is passed in header to simulate a authenticated user
+            user = request.META.get('HTTP_USER', None)
             if AnswerLike().user_liked_answer(user, answer_id):
                 AnswerLike.objects.get(user=user, answer_id=answer_id).delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)

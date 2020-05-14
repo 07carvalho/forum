@@ -23,6 +23,9 @@ class Post extends React.Component {
     }
   }
 
+  ANSWER_TYPE = 'answer';
+  POST_TYPE = 'post';
+
   componentDidMount() {
     this.getPost();
   }
@@ -48,7 +51,7 @@ class Post extends React.Component {
    * @param {boolean} liked
    * @public
    */
-  updateLikeButton = (post, liked) => {
+  updateLikePost = (post, liked) => {
     post.user_liked = !post.user_liked;
     post.likes = liked ? ++post.likes : --post.likes;
 
@@ -60,14 +63,41 @@ class Post extends React.Component {
   /**
    * Handle color button
    *
-   * @param {object} post
+   * @param {object} answer
+   * @param {boolean} liked
    * @public
    */
-  handleLikeButton = (post) => {
-    if (post.user_liked) {
-      this.dislikePost(post);
-    } else {
-      this.likePost(post);
+  updateLikeAnswer = (answer, liked) => {
+    answer.user_liked = !answer.user_liked;
+    answer.likes = liked ? ++answer.likes : --answer.likes;
+
+    this.setState({
+      post: this.state.post, answer: this.state.post.answers.map(item => {
+        return item.id === answer.id ? answer : item;
+      })
+    })
+  }
+
+  /**
+   * Handle color button
+   *
+   * @param {string} type
+   * @param {object} obj
+   * @public
+   */
+  handleLikeButton = (type, obj) => {
+    if (type === this.ANSWER_TYPE) {
+      if (obj.user_liked) {
+        this.dislikeAnswer(obj);
+      } else {
+        this.likeAnswer(obj);
+      }
+    } else if (type === this.POST_TYPE) {
+      if (obj.user_liked) {
+        this.dislikePost(obj);
+      } else {
+        this.likePost(obj);
+      }
     }
   }
 
@@ -81,21 +111,50 @@ class Post extends React.Component {
     API.likePost(post.id)
     .then(() => {
       const liked = true;
-      this.updateLikeButton(post, liked);
+      this.updateLikePost(post, liked);
     })
   }
 
   /**
    * Make request to delete like
    *
+   * @param {string} type
    * @param {object} post
    * @public
    */
   dislikePost = (post) => {
     API.dislikePost(post.id)
     .then(() => {
-      let liked = false;
-      this.updateLikeButton(post, liked);
+      const liked = false;
+      this.updateLikePost(post, liked);
+    })
+  }
+
+  /**
+   * Make request to like
+   *
+   * @param {object} answer
+   * @public
+   */
+  likeAnswer = (answer) => {
+    API.likeAnswer(this.state.post.id, answer.id)
+    .then(() => {
+      const liked = true;
+      this.updateLikeAnswer(answer, liked);
+    })
+  }
+
+  /**
+   * Make request to delete like
+   *
+   * @param {object} answer
+   * @public
+   */
+  dislikeAnswer = (answer) => {
+    API.dislikeAnswer(this.state.post.id, answer.id)
+    .then(() => {
+      const liked = false;
+      this.updateLikeAnswer(answer, liked);
     })
   }
 
@@ -129,7 +188,8 @@ class Post extends React.Component {
                     <span className="text-muted ml-1">{item.created_at}</span></p>
                   <p className="m-0" style={{'color': '#525f7f'}}>{item.text}</p>
                   <div className="data-container mt-3">
-                    <Badge color="secondary" pill className="ml--1">
+                    <Badge color={utils.verifyUserLiked(item)} pill className="ml--1"
+                      onClick={() => this.handleLikeButton(this.ANSWER_TYPE, item)}>
                       {item.likes} likes
                     </Badge>
                   </div>
@@ -184,7 +244,7 @@ class Post extends React.Component {
         <section className="section">
           <Container>
             <Row className="row-grid">
-              <Col sm lg="8">
+              <Col sm md="8">
                 {this.state.post &&
                 <Card className="mb-4">
                   <CardBody>
@@ -202,8 +262,8 @@ class Post extends React.Component {
                     </div>
                     <p className="mt-3" style={{'color': '#525f7f'}}>{this.state.post.text}</p>
                     <div className="data-container ml--1">
-                      <Badge color={utils.verifyUserLiked(this.state.post)} pill className="mr-1" style={{'cursor': 'pointer'}}
-                        onClick={() => this.handleLikeButton(this.state.post)}>
+                      <Badge color={utils.verifyUserLiked(this.state.post)} pill className="mr-1 pointer"
+                        onClick={() => this.handleLikeButton(this.POST_TYPE, this.state.post)}>
                         {this.state.post.likes} likes
                       </Badge>
                     </div>
@@ -246,7 +306,7 @@ class Post extends React.Component {
                 <hr />
                 {this.state.post && this.composeAnswers()}
               </Col>
-              <Col sm lg="4">
+              <Col sm md="4">
                 <Card>
                   <CardBody>A</CardBody>
                 </Card>
