@@ -2,6 +2,8 @@
 
 Welcome to Forum - the best Questions and Answers site ever!
 
+![](https://github.com/07carvalho/forum/blob/master/slide.PNG)
+
 #### Functionalities:
 * List all Posts
 * Create a Post
@@ -124,6 +126,6 @@ Remove a like in a Answer of a Post
 
 To run the tests:
 ```
-python3.6 -m unittest discover
+make test
 ```
 
