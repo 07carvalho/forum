@@ -17,8 +17,9 @@ class PostLikeCreate(generics.CreateAPIView, generics.DestroyAPIView):
         # user is passed in header to simulate a authenticated user
         user = request.META.get('HTTP_USER', None)
         if not PostLike().user_liked_post(user, post_id):
-            request.data['user'] = user
-            serializer = PostLikeSerializer(data=request.data)
+            data = request.data.copy()
+            data['user'] = user
+            serializer = PostLikeSerializer(data=data)
             if serializer.is_valid():
                 serializer.save(post_id=post_id)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)

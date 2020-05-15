@@ -18,8 +18,9 @@ class AnswerLikeCreate(generics.CreateAPIView, generics.DestroyAPIView):
         user = request.META.get('HTTP_USER', None)
         if Answer().is_answer_post(answer_id, post_id):
             if not AnswerLike().user_liked_answer(user, answer_id):
-                request.data['user'] = user
-                serializer = AnswerLikeSerializer(data=request.data)
+                data = request.data.copy()
+                data['user'] = user
+                serializer = AnswerLikeSerializer(data=data)
                 if serializer.is_valid():
                     serializer.save(answer_id=answer_id)
                     return Response(serializer.data, status=status.HTTP_201_CREATED)

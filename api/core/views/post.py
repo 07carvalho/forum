@@ -33,9 +33,10 @@ class PostList(generics.ListCreateAPIView):
     def post(self, request, format=None):
         # user is passed in header to simulate a authenticated user
         user = request.META.get('HTTP_USER', None)
-        request.data['user'] = user
+        data = request.data.copy()
+        data['user'] = user
 
-        serializer = PostSerializer(data=request.data)
+        serializer = PostSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

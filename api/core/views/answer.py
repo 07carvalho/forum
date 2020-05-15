@@ -15,9 +15,10 @@ class AnswerCreate(generics.CreateAPIView):
     def post(self, request, post_id=None, format=None):
         # user is passed in header to simulate a authenticated user
         user = request.META.get('HTTP_USER', None)
-        request.data['user'] = user
+        data = request.data.copy()
+        data['user'] = user
 
-        serializer = AnswerSerializer(data=request.data)
+        serializer = AnswerSerializer(data=data)
         if serializer.is_valid():
             serializer.save(post_id=post_id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
