@@ -1,37 +1,31 @@
 version: '3'
 
 services:
-  #  db:
-  #    image: postgres
-  #    ports:
-  #      - "5432:5432"
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - forumnetwork
   api:
+    container_name: forum-api
     build: ./api
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
     volumes:
       - ./api:/app/api
     ports:
-      - "8000:8000"
-  #    depends_on:
-  #      - db
-  web:
-    # container_name: front
-    build:
-      context: ./web
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./web:/app
-#      build: ./web
-#      command: ["npm", "start"]
-#      volumes:
-#        - ./web:/app/web
-#        - node-modules:/app/web/node_modules
-#      ports:
-#        - "3000:3000"
-#      environment:
-#        - NODE_ENV=development
+      - '8000:8000'
+    networks:
+      - forumnetwork
+    restart: always
+    depends_on:
+      - db
 
-#volumes:
-#  node-modules:
+volumes:
+  db:
+
+networks:
+  forumnetwork:
+      driver: bridge
