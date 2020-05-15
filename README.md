@@ -32,6 +32,9 @@ Then, run:
 make build-frontend
 ```
 
+## Change user
+As didactic purposes, it is possible to 'login' with other user just changing the value in `web/src/api/index.js`.
+
 ## API Routes
 #### List Posts
 List all posts created.

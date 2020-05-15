@@ -2,7 +2,7 @@ import axios from "axios";
 
 export default axios.create({
   headers: {
-    user: 'localhost'
+    user: 'ada'
   },
   responseType: 'json'
 })

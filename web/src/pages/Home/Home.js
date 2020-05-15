@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Badge,
-  Button,
   Card,
   CardBody,
   Container,
@@ -20,7 +19,7 @@ class Home extends React.Component {
     this.state = {
       order: 'created_at',
       ascSort: false,
-      filter: false,
+      filter: '',
       posts: [],
       topAnswered: [],
       postModal: {
@@ -66,7 +65,7 @@ class Home extends React.Component {
    */
   getPosts = () => {
     API.getPosts(
-      this.state.ascSort, this.state.order
+      this.state.ascSort, this.state.order, this.state.filter
     ).then((response) => {
       this.setState({ posts: response.data });
     })
@@ -118,6 +117,27 @@ class Home extends React.Component {
    */
   activeOrderButton = (order) => {
     return this.state.order === order ? 'primary' : 'secondary';
+  }
+
+  /**
+   * Change filter field and call the request function.
+   *
+   * @param {string} filter
+   * @public
+   */
+  handleFilter = (filter) => {
+    let field = this.state.filter === filter ? '' : filter;
+    this.setState({filter: field}, () => this.getPosts());
+  }
+
+  /**
+   * Active (change color) a filter button
+   *
+   * @param {string} filter
+   * @public
+   */
+  activeFilterButton  = (filter) => {
+    return this.state.filter === filter ? 'primary' : 'secondary';
   }
 
   /**
@@ -239,6 +259,16 @@ class Home extends React.Component {
     this.createPost(this.toggleModal('postModal'));
   }
 
+  composeTopAnswered = () => {
+    if (this.state.topAnswered.length > 0) {
+      return (this.state.topAnswered.map((item) => {
+        return <p><a href={`/posts/${item.id}/${item.slug}/`}>{item.title}</a></p>
+      }))
+    } else {
+      return <h6>Nenhuma pergunta respondida</h6>
+    }
+  }
+
   render() {
     return (
       <main className="mt-7" ref="main">
@@ -264,7 +294,9 @@ class Home extends React.Component {
                 <hr />
                 <Filters
                   handleOrder={this.handleOrder}
+                  handleFilter={this.handleFilter}
                   activeOrderButton={this.activeOrderButton}
+                  activeFilterButton={this.activeFilterButton}
                   handleSortIcon={this.handleSortIcon}
                 />
                 { this.composePosts() }
@@ -279,9 +311,7 @@ class Home extends React.Component {
                       Mais Respondidas
                     </h6>
                     <div className="description mt-3">
-                      {this.state.topAnswered && this.state.topAnswered.map((item) => {
-                        return <p><a href={`/posts/${item.id}/${item.slug}/`}>{item.title}</a></p>
-                      })}
+                      {this.state.topAnswered && this.composeTopAnswered()}
                     </div>
                   </CardBody>
                 </Card>

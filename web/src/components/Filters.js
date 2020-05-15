@@ -6,21 +6,31 @@ class Filters extends React.Component {
 
   render() {
     return (
-      <div className="btn-wrapper mb-4">
-        <FilterButton
-          text="Data"
-          name="created_at"
-          handleOrder={() => this.props.handleOrder('created_at')}
-          activeOrderButton={this.props.activeOrderButton('created_at')}
-          handleSortIcon={this.props.handleSortIcon('created_at')}
-        />
-        <FilterButton
-          text="Likes"
-          name="likes"
-          handleOrder={() => this.props.handleOrder('likes')}
-          activeOrderButton={this.props.activeOrderButton('likes')}
-          handleSortIcon={this.props.handleSortIcon('likes')}
-        />
+      <div className="btn-wrapper mb-4 d-flex" style={{'justifyContent': 'space-between'}}>
+        <div className="order-container">
+          <FilterButton
+            text="Data"
+            name="created_at"
+            handleClick={() => this.props.handleOrder('created_at')}
+            activeButton={this.props.activeOrderButton('created_at')}
+            handleSortIcon={this.props.handleSortIcon('created_at')}
+          />
+          <FilterButton
+            text="Likes"
+            name="likes"
+            handleClick={() => this.props.handleOrder('likes')}
+            activeButton={this.props.activeOrderButton('likes')}
+            handleSortIcon={this.props.handleSortIcon('likes')}
+          />
+        </div>
+        <div className="filter-container">
+          <FilterButton
+            text="Sem Respostas"
+            name="no-answers"
+            handleClick={() => this.props.handleFilter('no-answers')}
+            activeButton={this.props.activeFilterButton('no-answers')}
+          />
+        </div>
       </div>
     );
   }
@@ -29,6 +39,8 @@ class Filters extends React.Component {
 Filters.propTypes = {
   handleOrder: PropTypes.func.isRequired,
   activeOrderButton: PropTypes.func.isRequired,
+  handleFilter: PropTypes.func.isRequired,
+  activeFilterButton: PropTypes.func.isRequired,
   handleSortIcon: PropTypes.func.isRequired,
 };
 

@@ -19,10 +19,9 @@ class ForumFooter extends React.Component {
               <div className="copyright">
                 © {new Date().getFullYear()}{" "}
                 <a
-                  href="https://www.creative-tim.com?ref=adsr-footer"
-                  target="_blank"
+                  href="https://www.linkedin.com/in/felipecarvalho07/"
                 >
-                  Creative Tim
+                  Felipe Carvalho
                 </a>
                 .
               </div>
@@ -31,34 +30,9 @@ class ForumFooter extends React.Component {
               <Nav className="nav-footer justify-content-end">
                 <NavItem>
                   <NavLink
-                    href="https://www.creative-tim.com?ref=adsr-footer"
-                    target="_blank"
+                    href="https://github.com/07carvalho"
                   >
-                    Creative Tim
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink
-                    href="https://www.creative-tim.com/presentation?ref=adsr-footer"
-                    target="_blank"
-                  >
-                    About Us
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink
-                    href="http://blog.creative-tim.com?ref=adsr-footer"
-                    target="_blank"
-                  >
-                    Blog
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink
-                    href="https://github.com/creativetimofficial/argon-design-system-react/blob/master/LICENSE.md"
-                    target="_blank"
-                  >
-                    MIT License
+                    GitHub
                   </NavLink>
                 </NavItem>
               </Nav>

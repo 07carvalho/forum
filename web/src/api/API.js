@@ -1,9 +1,12 @@
 import index from './index';
 
 export default {
-  getPosts: (ascSort, orderField) => {
+  getPosts: (ascSort, orderField, filterField) => {
     const order = `${ascSort ? '' : '-'}${orderField}`;
-    const params = {order};
+    let params = {order};
+    if (filterField !== '') {
+      params.filter = filterField;
+    }
     return new Promise((resolve, reject) => {
       index.get('/api/v1/posts/', {params: params})
       .then(response => {

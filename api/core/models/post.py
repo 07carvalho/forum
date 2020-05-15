@@ -41,7 +41,7 @@ class Post(models.Model):
             if filter_by == 'no-answers':
                 return queryset.annotate(answers_count=Count('answers')).filter(answers_count=0)
             elif filter_by == 'top-answered':
-                return queryset.annotate(answers_count=Count('answers')).order_by('-answers_count')[:5]
+                return queryset.annotate(answers_count=Count('answers')).filter(answers_count__gte=1).order_by('-answers_count')[:5]
             elif filter_by == 'related':
                 # for didactic purposes only. it is not related at all.
                 return queryset.order_by('?')[:5]

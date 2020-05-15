@@ -8,13 +8,13 @@ class FilterButton extends React.Component {
     return (
       <Button
         className="btn-icon mb-3 mb-sm-0 ml-1"
-        color={this.props.activeOrderButton}
+        color={this.props.activeButton}
         type="button"
-        onClick={this.props.handleOrder}
+        onClick={this.props.handleClick}
       >
-        <span className="btn-inner--icon mr-1">
+        {this.props.handleSortIcon && <span className="btn-inner--icon mr-1">
           <i className={`fa ${this.props.handleSortIcon}`} />
-        </span>
+        </span>}
         <span className="btn-inner--text">{this.props.text}</span>
       </Button>
     );
@@ -24,9 +24,9 @@ class FilterButton extends React.Component {
 FilterButton.propTypes = {
   text: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  handleOrder: PropTypes.func.isRequired,
-  activeOrderButton: PropTypes.func.isRequired,
-  handleSortIcon: PropTypes.func.isRequired,
+  handleClick: PropTypes.func.isRequired,
+  activeButton: PropTypes.func.isRequired,
+  handleSortIcon: PropTypes.func,
 };
 
 export default FilterButton;
