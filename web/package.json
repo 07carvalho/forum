@@ -12,7 +12,7 @@
     "classnames": "^2.2.6",
     "headroom.js": "^0.11.0",
     "moment": "^2.24.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "nouislider": "^14.1.1",
     "react": "^16.13.1",
     "react-datetime": "^2.16.3",
